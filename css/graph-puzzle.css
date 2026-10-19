@@ -1,0 +1,688 @@
+/* ==========================================================================
+   graph-puzzle.css — Clean, Unbloated Styling for Graph Sliding Puzzle
+   Visual Identity:
+   - Charcoal Black: #111827
+   - Gold:           #CF9634
+   - Gold Dim:       #FFEDCD
+   - White:          #FFFFFF
+   - Code font:      'JetBrains Mono', monospace
+   - UI font:        Arial, -apple-system, BlinkMacSystemFont, sans-serif
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --c-black: #111827;
+  --c-gold: #CF9634;
+  --c-gold-hover: #b58027;
+  --c-gold-dim: #FFEDCD;
+  --c-gold-dim-border: #f8ddaa;
+  --c-white: #ffffff;
+  --c-bg: #f8fafc;
+  --c-panel: #ffffff;
+  --c-border: #e2e8f0;
+  --c-border-dark: #cbd5e1;
+  --c-text: #111827;
+  --c-text-muted: #64748b;
+  --c-danger: #ef4444;
+
+  --font-main: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100vh;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--c-bg);
+  color: var(--c-text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+}
+
+/* ==========================================================================
+   1. APP HEADER & MAIN TOOLBAR
+   ========================================================================== */
+.app-header {
+  background-color: var(--c-panel);
+  border-bottom: 1px solid var(--c-border);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  z-index: 10;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--c-gold);
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.brand-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--c-black);
+  letter-spacing: -0.01em;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  color: var(--c-text-muted);
+  font-weight: 500;
+}
+
+/* Header Action Toolbar */
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tool-group {
+  display: flex;
+  align-items: center;
+  background-color: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.btn-tool {
+  background: transparent;
+  border: none;
+  font-family: var(--font-main);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-black);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.12s ease;
+}
+
+.btn-tool:hover {
+  background-color: var(--c-border);
+}
+
+.btn-tool.active {
+  background-color: var(--c-black);
+  color: var(--c-white);
+}
+
+.btn-tool.active svg {
+  fill: var(--c-white);
+}
+
+.btn-tool svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--c-black);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--c-border);
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--font-main);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--c-border-dark);
+  background-color: var(--c-white);
+  color: var(--c-black);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.12s ease;
+}
+
+.btn:hover {
+  background-color: var(--c-bg);
+  border-color: var(--c-black);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background-color: var(--c-black);
+  color: var(--c-white);
+  border-color: var(--c-black);
+}
+
+.btn-primary:hover {
+  background-color: #1e293b;
+  border-color: #1e293b;
+}
+
+.btn-gold {
+  background-color: var(--c-gold);
+  color: var(--c-black);
+  border-color: var(--c-gold);
+}
+
+.btn-gold:hover {
+  background-color: var(--c-gold-hover);
+  border-color: var(--c-gold-hover);
+}
+
+.btn-algo {
+  background-color: var(--c-black);
+  color: var(--c-white);
+  border-color: var(--c-black);
+  min-width: 95px;
+}
+
+.btn-algo:hover {
+  background-color: #1e293b;
+  border-color: #1e293b;
+}
+
+.btn-algo.algo-active {
+  background-color: #9ca3af !important;
+  border-color: #9ca3af !important;
+  color: #ffffff !important;
+  cursor: default;
+}
+
+.btn-sm {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+/* ==========================================================================
+   2. MAIN TWO-COLUMN SPLIT WORKSPACE
+   ========================================================================== */
+.main-workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+  height: calc(100vh - 54px);
+}
+
+/* LEFT COLUMN: Board Canvas & State Setup (Fixed Width ~460px) */
+.left-pane {
+  width: 460px;
+  background-color: var(--c-panel);
+  border-right: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* RIGHT COLUMN: Search Tree & Exploration (Flex-1) */
+.right-pane {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--c-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cards & Sections */
+.card-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.section-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-black);
+}
+
+.badge-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background-color: var(--c-gold-dim);
+  color: var(--c-black);
+  border: 1px solid var(--c-gold-dim-border);
+}
+
+/* ==========================================================================
+   3. BOARD SVG CANVAS (GRAPH SLIDING PUZZLE)
+   ========================================================================== */
+.board-canvas-wrapper {
+  width: 100%;
+  height: 400px;
+  background-color: #ffffff;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.goal-canvas-wrapper {
+  width: 100%;
+  height: 250px;
+  background-color: #ffffff;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+svg.board-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Board SVG Elements (Strict matching graphPenyelesaian3.svg) */
+.graph-edge {
+  stroke: var(--c-black);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  cursor: pointer;
+  transition: stroke 0.12s ease;
+}
+
+.graph-edge:hover {
+  stroke: var(--c-gold);
+  stroke-width: 3;
+}
+
+.graph-edge.selected-edge {
+  stroke: var(--c-danger) !important;
+  stroke-width: 3.5 !important;
+  stroke-dasharray: 4 4;
+}
+
+/* Rubberband Ghost Wire */
+.ghost-wire {
+  stroke: var(--c-gold);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+  pointer-events: none;
+}
+
+/* Marquee Selection */
+.marquee-rect {
+  fill: rgba(207, 150, 52, 0.1);
+  stroke: var(--c-gold);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  pointer-events: none;
+}
+
+/* Nodes */
+.graph-node {
+  cursor: pointer;
+}
+
+.graph-node circle {
+  fill: var(--c-white);
+  stroke: var(--c-black);
+  stroke-width: 2;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+/* Slot 0 (Empty Hole) - Solid Gold */
+.graph-node.node-empty circle {
+  fill: var(--c-gold) !important;
+  stroke: var(--c-black) !important;
+}
+
+/* Movable Neighbors of Slot 0 - Gold Dim */
+.graph-node.node-movable circle {
+  fill: var(--c-gold-dim) !important;
+  stroke: var(--c-black) !important;
+}
+
+.graph-node.node-selected circle {
+  stroke: var(--c-black) !important;
+  stroke-width: 3.5 !important;
+  filter: drop-shadow(0 2px 5px rgba(207, 150, 52, 0.4));
+}
+
+.graph-node text.node-label {
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 700;
+  fill: var(--c-black);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.graph-node text.pos-indicator {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  fill: var(--c-text-muted);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.canvas-hint-strip {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--c-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   4. STATE CONFIGURATION (INITIAL & GOAL INPUTS)
+   ========================================================================== */
+.state-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-black);
+  text-transform: uppercase;
+}
+
+.input-array {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-border);
+  background-color: var(--c-white);
+  color: var(--c-black);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input-array:focus {
+  border-color: var(--c-gold);
+  box-shadow: 0 0 0 2px rgba(207, 150, 52, 0.15);
+}
+
+.preset-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.chip-btn {
+  background-color: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--c-black);
+  padding: 3px 7px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.chip-btn:hover {
+  background-color: var(--c-gold-dim);
+  border-color: var(--c-gold);
+}
+
+.alert-box {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  line-height: 1.4;
+  display: none;
+}
+
+/* ==========================================================================
+   5. RIGHT PANE: SEARCH TREE & PLAYBACK TRACING
+   ========================================================================== */
+.tree-toolbar {
+  background-color: var(--c-panel);
+  border-bottom: 1px solid var(--c-border);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tree-canvas-viewport {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff;
+  cursor: grab;
+}
+
+.tree-canvas-viewport:active {
+  cursor: grabbing;
+}
+
+svg.tree-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Tree SVG Nodes & Lines (Strict matching treePenyelesaian3.svg) */
+.tree-edge {
+  stroke: var(--c-black);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.tree-edge.solution-edge {
+  stroke: var(--c-gold);
+  stroke-width: 2.8;
+}
+
+.tree-node circle {
+  fill: var(--c-white);
+  stroke: var(--c-black);
+  stroke-width: 2;
+  cursor: pointer;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+/* Solution Path Node - Solid Gold #CF9634 */
+.tree-node.node-solution circle,
+.tree-node.node-active circle {
+  fill: var(--c-gold) !important;
+  stroke: var(--c-black) !important;
+}
+
+/* Traversed / Visited but Not in Solution - Solid Black #111827 with White Text */
+.tree-node.node-traversed circle {
+  fill: var(--c-black) !important;
+  stroke: var(--c-black) !important;
+}
+
+.tree-node.node-traversed text.circle-label {
+  fill: #ffffff !important;
+}
+
+.tree-node text.circle-label {
+  font-family: var(--font-main);
+  font-size: 12.5px;
+  font-weight: 800;
+  fill: var(--c-black);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+/* Array Label - Strictly JetBrains Mono with 0 highlighted in Gold */
+.tree-node text.array-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--c-black);
+  pointer-events: none;
+}
+
+.tree-node text.array-label tspan.zero-tile {
+  fill: var(--c-gold);
+  font-weight: 800;
+}
+
+/* Tree Status & Playback Footer — Permanently docked at bottom of viewport */
+.tree-footer {
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background-color: var(--c-panel);
+  border-top: 1px solid var(--c-border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stats-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11.5px;
+  color: var(--c-text-muted);
+}
+
+.stats-summary strong {
+  color: var(--c-black);
+  font-family: var(--font-mono);
+}
+
+.solution-path-strip {
+  background-color: var(--c-gold-dim);
+  border: 1px solid var(--c-gold-dim-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--c-black);
+}
+
+/* Toast */
+.app-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: var(--c-black);
+  color: var(--c-white);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.app-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

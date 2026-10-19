@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Sliding Puzzle</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  
+  <!-- Typography: JetBrains Mono for State Arrays & Arial for UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Clean, unbloated stylesheet -->
+  <link rel="stylesheet" href="css/graph-puzzle.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. TOP TOOLBAR & ACTION HEADER
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="brand-section">
+      <img src="logo.jpg" alt="Logo" class="brand-logo-img">
+      <div>
+        <h1 class="brand-title">Graph Sliding Puzzle</h1>
+        <p class="brand-subtitle">Sancaaa x Astrologist Mona Megistus</p>
+      </div>
+    </div>
+
+    <!-- Action Toolbar: Tools & AI Solvers -->
+    <div class="toolbar-actions">
+      <!-- Interaction Tool: Move / Slide -->
+      <div class="tool-group">
+        <button id="tool-select" class="btn-tool active" title="Move [V]: Drag nodes to arrange layout or click adjacent tile to slide">
+          <svg viewBox="0 0 24 24"><path d="M7 2l12 11.2-5.8.5 3.3 6.3-2.5 1.3-3.2-6.4L7 18.5V2z"/></svg>
+          Move [V]
+        </button>
+      </div>
+
+      <!-- Graph Structure Tools -->
+      <div class="tool-group">
+        <button id="tool-add-node" class="btn-tool" title="Add Node [N]: Click canvas to place node">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-3H8v-2h3V8h2v3h3v2h-3v3z"/></svg>
+          + Node [N]
+        </button>
+        <button id="tool-add-edge" class="btn-tool" title="Connect Edge [C]: Click two nodes to wire or unwire">
+          <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+          Connect [C]
+        </button>
+        <button id="tool-delete" class="btn-tool" title="Delete [X]: Click node or line to delete">
+          <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          Delete [X]
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- AI Search Solvers -->
+      <button id="btnSolveBFS" class="btn btn-algo" title="Solve using Breadth-First Search (Shortest Path)">
+        Run BFS ▶
+      </button>
+      <button id="btnSolveDFS" class="btn btn-algo" title="Solve using Depth-First Search (Deep Exploration)">
+        Run DFS ▶
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       2. MAIN TWO-COLUMN SPLIT WORKSPACE
+       ======================================================================== -->
+  <main class="main-workspace">
+
+    <!-- LEFT PANE: Graph Board Canvas & State Setup -->
+    <aside class="left-pane">
+      
+      <!-- Card A: Puzzle Board Canvas -->
+      <section class="card-section">
+        <div class="section-title-bar">
+          <span class="section-title">Puzzle Board</span>
+          <span class="badge-tag" id="boardBadge">Star-5 Preset</span>
+        </div>
+
+        <div class="board-canvas-wrapper" id="boardCanvasWrap">
+          <svg id="boardSvg" class="board-canvas" viewBox="0 0 404 386"></svg>
+        </div>
+
+        <div class="canvas-hint-strip">
+          <span>• Click adjacent tile to slide into <strong style="color:var(--c-gold)">0</strong></span>
+          <span>• Switch tools to edit layout</span>
+        </div>
+      </section>
+
+      <!-- Card B: State Configuration (Initial & Goal Inputs) -->
+      <section class="card-section" style="border-bottom:none;">
+        <div class="section-title-bar">
+          <span class="section-title">Initial &amp; Goal States</span>
+          <button id="btnResetBoard" class="btn btn-sm" title="Reset board to Initial State">Reset Board ↺</button>
+        </div>
+
+        <div class="state-field-group">
+          <!-- Initial State Field -->
+          <div class="field-block">
+            <div class="field-header">
+              <label for="inputInitialState" class="field-label">Initial State (P1 &hellip; PN):</label>
+              <button id="btnSetCurrentInit" class="chip-btn" type="button" title="Copy active arrangement on board as Initial State">Use Current</button>
+            </div>
+            <input type="text" id="inputInitialState" class="input-array" placeholder="1, 2, 3, 4, 5, 6, 7, 8, 9, 0" spellcheck="false" />
+          </div>
+
+          <!-- Goal State Field -->
+          <div class="field-block">
+            <div class="field-header">
+              <label for="inputGoalState" class="field-label">Goal State (Target):</label>
+              <button id="btnSetCurrentGoal" class="chip-btn" type="button" title="Copy active arrangement on board as Goal State">Use Current</button>
+            </div>
+            <input type="text" id="inputGoalState" class="input-array" placeholder="1, 2, 0, 3, 4, 6, 5, 8, 9, 7" spellcheck="false" />
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="field-block">
+            <span class="field-label" style="font-size:10px; color:var(--c-text-muted);">Quick Presets:</span>
+            <div class="preset-chip-row">
+              <button id="chipPresetStar5" class="chip-btn" type="button" title="5-Star Graph (10 nodes, Ari Muhardono 2023)">5-Star Graph</button>
+              <button id="chipPresetStar6" class="chip-btn" type="button" title="6-Star Graph (12 nodes, Hexagram)">6-Star Graph</button>
+            </div>
+          </div>
+
+          <!-- Alert Error -->
+          <div id="stateAlert" class="alert-box"></div>
+
+          <!-- Apply States Button -->
+          <button id="btnApplyState" class="btn btn-primary btn-sm" style="width:100%; margin-top:4px;">
+            Apply Initial &amp; Goal States ✓
+          </button>
+
+          <!-- Target Goal Star Graph Preview -->
+          <div class="goal-preview-block" style="margin-top:14px;">
+            <div class="section-title-bar" style="margin-bottom:8px;">
+              <span class="section-title">Target Goal Star Graph</span>
+              <span class="badge-tag" id="goalBadge">Target Goal</span>
+            </div>
+            <div class="goal-canvas-wrapper" id="goalCanvasWrap">
+              <svg id="goalBoardSvg" class="board-canvas" viewBox="0 0 404 386"></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- RIGHT PANE: Complete Search Tree & Playback Tracing -->
+    <section class="right-pane">
+      
+      <!-- Tree Header Toolbar -->
+      <div class="tree-toolbar">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="section-title">Complete Search Tree</span>
+          <span id="solutionPathStrip" class="solution-path-strip">No solution path</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button id="btnTreeFit" class="btn btn-sm" title="Fit search tree into viewport">Fit View</button>
+          <button id="btnTreeZoomIn" class="btn btn-sm" title="Zoom In (+)">+ Zoom</button>
+          <button id="btnTreeZoomOut" class="btn btn-sm" title="Zoom Out (-)">- Zoom</button>
+        </div>
+      </div>
+
+      <!-- Tree SVG Viewport (Pan & Zoom) -->
+      <div class="tree-canvas-viewport" id="treeViewport" title="Drag to pan canvas, scroll mousewheel to zoom">
+        <svg id="treeSvg" class="tree-canvas"></svg>
+      </div>
+
+      <!-- Tree Footer & Playback Controls -->
+      <footer class="tree-footer">
+        <!-- Playback Buttons -->
+        <div class="playback-controls">
+          <button id="btnStepFirst" class="btn btn-sm" title="First Step">⏮</button>
+          <button id="btnStepPrev" class="btn btn-sm" title="Previous Step">◀</button>
+          <button id="btnPlayPause" class="btn btn-primary btn-sm" title="Play / Pause Tracing">▶ Play</button>
+          <button id="btnStepNext" class="btn btn-sm" title="Next Step">Next ▶</button>
+          <button id="btnStepLast" class="btn btn-sm" title="Last Step">⏭</button>
+          <span id="valStepCount" style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; margin-left:6px;">Step 0 / 0</span>
+        </div>
+
+        <!-- Search Performance Statistics -->
+        <div class="stats-summary" id="statsSummaryBlock">
+          <span>Algorithm: <strong>BFS</strong></span>
+          <span>Moves: <strong>0</strong></span>
+          <span>Expanded: <strong>0</strong></span>
+          <span>Total Tree: <strong>0</strong></span>
+          <span>Time: <strong>0 ms</strong></span>
+        </div>
+      </footer>
+
+    </section>
+
+  </main>
+
+  <!-- Core Controller Script -->
+  <script src="js/graph-puzzle.js"></script>
+
+</body>
+</html>
