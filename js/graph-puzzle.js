@@ -800,7 +800,7 @@
       // DFS with LIFO Stack, Depth Limit & Path Visited (Cycle Avoidance)
       const stack = [0];
       const maxDfsDepth = 15;
-      const maxNodesLimit = 2500;
+      const maxNodesLimit = 3500;
 
       while (stack.length > 0 && nodeCounter < maxNodesLimit) {
         const curId = stack.pop();
@@ -816,8 +816,8 @@
         if (cur.depth < maxDfsDepth) {
           const zeroPos = cur.state.indexOf(0) + 1;
           const neighbors = (adj[zeroPos] || []).slice();
-          // Identical ascending sort as BFS so tree children are ordered left-to-right identically
-          neighbors.sort((a, b) => cur.state[a - 1] - cur.state[b - 1]);
+          // Urutkan cabang anak berdasarkan nomor simpul wadah (Node ID ascending: P1, P2, ...)
+          neighbors.sort((a, b) => a - b);
 
           const createdChildren = [];
           neighbors.forEach(nPos => {
@@ -1239,7 +1239,71 @@
   }
 
   // =========================================================================
-  // 12. UI WIRING & INITIALIZATION
+  // 12. SVG EXPORT / DOWNLOAD FUNCTIONALITY
+  // Exports clean, standalone SVG of currently rendered star graph board
+  // =========================================================================
+  function exportSvgElement(svgElement, defaultFilename = 'star_graph.svg') {
+    if (!svgElement) return;
+
+    // 1. Clone the SVG element so we do not mutate live DOM
+    const clone = svgElement.cloneNode(true);
+
+    // 2. Remove interactive UI elements not meant for exported graphics
+    const unwanted = clone.querySelectorAll('#ghostWireLine, #marqueeRect, .ghost-wire, .marquee-rect');
+    unwanted.forEach(el => el.remove());
+
+    // 3. Ensure proper namespaces and dimensions
+    const vb = svgElement.getAttribute('viewBox') || '0 0 404 386';
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    clone.setAttribute('viewBox', vb);
+
+    const vbParts = vb.trim().split(/\s+/).map(Number);
+    if (vbParts.length === 4) {
+      clone.setAttribute('width', vbParts[2]);
+      clone.setAttribute('height', vbParts[3]);
+    }
+
+    // 4. Inject self-contained styling with exact palette
+    const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+    styleEl.textContent = `
+      .graph-edge { stroke: #111827; stroke-width: 1.8; stroke-linecap: round; fill: none; }
+      .graph-node circle { fill: #ffffff; stroke: #111827; stroke-width: 2; }
+      .graph-node.node-empty circle { fill: #CF9634 !important; stroke: #111827 !important; }
+      .graph-node.node-movable circle { fill: #FFEDCD !important; stroke: #111827 !important; }
+      .graph-node.node-selected circle { stroke: #111827 !important; stroke-width: 3.5 !important; }
+      .node-label { font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #111827; text-anchor: middle; dominant-baseline: central; }
+      .pos-indicator { font-family: Arial, sans-serif; font-size: 9px; font-weight: 700; fill: #64748b; text-anchor: middle; }
+    `;
+    clone.insertBefore(styleEl, clone.firstChild);
+
+    // 5. Background rect (transparent so it seamlessly overlays on Canva slides)
+    let bg = clone.querySelector('#boardBgRect');
+    if (bg) {
+      bg.setAttribute('fill', 'none');
+    }
+
+    // 6. Serialize and trigger browser download
+    const serializer = new XMLSerializer();
+    let svgString = serializer.serializeToString(clone);
+    if (!svgString.startsWith('<?xml')) {
+      svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
+    }
+
+    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = defaultFilename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(`✓ Downloaded ${defaultFilename}`);
+  }
+
+  // =========================================================================
+  // 13. UI WIRING & INITIALIZATION
   // =========================================================================
   function init() {
     setupCanvasEvents();
@@ -1303,6 +1367,26 @@
       renderBoard();
       showToast('Board reset to Initial State');
     };
+
+    // SVG Download Buttons (Board & Goal)
+    const btnDlBoard = document.getElementById('btnDownloadBoardSvg');
+    if (btnDlBoard) {
+      btnDlBoard.onclick = () => {
+        const stepTag = (currentStepIdx > 0 && traceEvents && traceEvents[currentStepIdx]) ? `_step_${currentStepIdx}` : '';
+        const stateTag = currentState ? `_${currentState.join('_')}` : '';
+        const fname = `star_graph${stepTag}${stateTag}.svg`;
+        exportSvgElement(document.getElementById('boardSvg'), fname);
+      };
+    }
+
+    const btnDlGoal = document.getElementById('btnDownloadGoalSvg');
+    if (btnDlGoal) {
+      btnDlGoal.onclick = () => {
+        const stateTag = goalState ? `_${goalState.join('_')}` : '';
+        const fname = `star_graph_goal${stateTag}.svg`;
+        exportSvgElement(document.getElementById('goalBoardSvg'), fname);
+      };
+    }
 
     // Tree View Controls
     const btnFit = document.getElementById('btnTreeFit');
